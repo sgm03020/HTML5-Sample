@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!-- サンプルコード -->
+<!-- http://www.phppro.jp/school/ajax/vol1/4 -->
+
+<html xmlns="http://www.w3.org/1999/xhtml"  xml:lang="ja" lang= "ja" dir="ltr">
+<head>
+    <meta http-equiv="Content-Type"  content= "text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Script-Type"  content= "text/javascript" />
+    <meta http-equiv="Content-Style-Type"  content="text/css" />
+    <script type="text/javascript">
+//<![CDATA[
+function createXMLHttpRequest(){
+
+    /* XMLHttpRequest オブジェクトを作成する   */
+    if(window.addEventListener){
+
+        /* Firefox 用 */
+        return new XMLHttpRequest();
+    }else{
+
+        /* IE 用 */
+        return new ActiveXObject("Microsoft.XMLHTTP");
+    }
+
+}
+
+function XMLHttpRequestByPost(postdata){
+
+    /* hello.php にリクエストを送る */
+    var request = createXMLHttpRequest();
+
+    /* ステータス( 読み込み中なのか完了したのか) が変更されたら、
+     * readyStateChangeHandler を実行 */
+    // http://192.168.0.30:48328/hello.php
+    // http://localhost:8000/hello.php
+    //
+    request.open("POST", "http://localhost:8000/hello.php" , true);
+    request.onreadystatechange = readyStateChangeHandler;
+    request.setRequestHeader( "Content-Type" ,  "application/x-www-form-urlencoded");
+    request.send("name=" + postdata);
+
+    function readyStateChangeHandler(){
+        switch(request.readyState){
+            case 4:
+                /* 完了の場合、サーバから送られたデータを表示 */
+                if(request.status === 200){
+                    document.getElementById( 'result').innerHTML  = request.responseText;
+                }
+                break;
+        }
+    }
+}
+
+function RequestByPost(){
+    XMLHttpRequestByPost(document.getElementById('name').value);
+}
+
+
+/* ページをロードしたときに以下のイベントハンドラを追加する */
+window.onload = function(){
+
+    /* id がsubmit-button のボタンがクリックされたら            RequestByPost 関数を実行 */
+    var obj = document.getElementById('submit-button');
+    if(window.addEventListener){
+
+        /* Firefox 用 */
+        obj.addEventListener("click", RequestByPost, false);
+
+    }else{
+
+        /* IE 用 */
+        obj.attachEvent("onclick", RequestByPost);
+    }
+};
+//]]>
+    </script>
+    <title>  こんにちはサンプル </title>
+</head>
+<body>
+    <h1> こんにちは○○○さん</h1>
+    <label for="name" > 名前 </label>
+    <input type="text" id="name"  name="name" style="width:100px;" />
+    <p id="result"></p>
+    <input type="submit"  id="submit-button"  value="クリック"  />
+</body>
+</html> 
+
+ 
